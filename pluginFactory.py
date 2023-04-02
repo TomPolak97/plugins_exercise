@@ -6,8 +6,6 @@ Every new plugin should be created in this class.
 """
 
 
-class PluginFactory:
-    @staticmethod
-    def create_plugin(plugin_type, **kwargs):
-        if plugin_type == 'dummy_api':
-            return DummyApiPlugin(kwargs)
+def create_plugin(plugin_type, app_key):
+    if plugin_type == 'dummy_api':
+        return DummyApiPlugin(app_key)

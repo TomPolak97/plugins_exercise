@@ -10,7 +10,7 @@ class DummyApiPlugin(Plugin):
         self.api_key = api_key
 
     def connectivity_test(self):
-        api_url = 'https://dummyapi.io/data/v1/user'
+        api_url = 'https://dummyapi.io/data/v1/user?created=1'
         headers = {'app-id': self.api_key}
         response = requests.get(api_url, headers=headers)
         if response.status_code == 200:
@@ -24,25 +24,21 @@ class DummyApiPlugin(Plugin):
 
     def collectUsers(self):
         all_users_list = []
-        base_url = 'https://dummyapi.io/data/v1/user'
+        base_url = 'https://dummyapi.io/data/v1/user?limit=10'
         headers = {'app-id': self.api_key}
         response = requests.get(base_url, headers=headers)
-        if response.status_code == 200:
-            return True
-        else:
+        if not response.status_code == 200:
             raise RequestFailedException(response.status_code)
-        total_pages = response.json()['totalPages']
+        total_pages = response.json()['data']
 
-        for page in range(total_pages):
+        for page in range(len(total_pages)):
             url = f'{base_url}?page={page}&limit=20'
             headers = {'app-id': self.api_key}
             response = requests.get(url, headers=headers)
-            if response.status_code == 200:
-                return True
-            else:
+            if not response.status_code == 200:
                 raise RequestFailedException(response.status_code)
             users = response.json()['data']
-            all_users_list.extend(users)
+            all_users_list.append(users)
 
         write_list_to_file('users.json', all_users_list)
 
@@ -51,9 +47,7 @@ class DummyApiPlugin(Plugin):
         base_url = 'https://dummyapi.io/data/v1/post?limit=50'
         headers = {'app-id': self.api_key}
         response = requests.get(base_url, headers=headers)
-        if response.status_code == 200:
-            return True
-        else:
+        if not response.status_code == 200:
             raise RequestFailedException(response.status_code)
         posts = response.json()['data']
 
@@ -61,9 +55,7 @@ class DummyApiPlugin(Plugin):
             post_id = post['id']
             url = f'https://dummyapi.io/data/v1/post/{post_id}/comment'
             response = requests.get(url, headers=headers)
-            if response.status_code == 200:
-                return True
-            else:
+            if not response.status_code == 200:
                 raise RequestFailedException(response.status_code)
             comments = response.json()['data']
             post['comments'] = comments

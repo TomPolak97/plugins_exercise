@@ -1,12 +1,12 @@
-import pluginFactory
-
+from plugins_exercise import pluginFactory
+from plugins_exercise.pluginFactory import create_plugin
 
 def main():
 
     # Creating dummy_api plugin using the plugin factory.
     plugin_type = 'dummy_api'
-    plugin_optional_args = {...}
-    plugin = pluginFactory.create_plugin(plugin_type, **plugin_optional_args)
+    app_key = '6429a239efb0fd3067bbd50f'
+    plugin = pluginFactory.create_plugin(plugin_type, app_key)
     plugin.run()
 
 
